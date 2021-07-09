@@ -18,6 +18,32 @@ class I18N {
 
 
 
+
+	/**
+	<fusedoc>
+		<description>
+			obtain all locales (if specified)
+		</description>
+		<io>
+			<in>
+				<string name="I18N_LOCALE_ALL" optional="yes" />
+			</in>
+			<out>
+				<string name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function all() {
+		$result = defined('I18N_LOCALE_ALL') ? I18N_LOCALE_ALL : self::locale();
+		$result = array_map('strtolower', explode(',', $result));
+		if ( array_search('en', $result) === false ) $result[] = 'en';
+		return $result;
+	}
+
+
+
+
 	/**
 	<fusedoc>
 		<description>
@@ -168,7 +194,7 @@ class I18N {
 	</fusedoc>
 	*/
 	public static function locale() {
-		return define('I18N_LOCALE') ? I18N_LOCALE : 'en';
+		return define('I18N_LOCALE') ? strtolower(I18N_LOCALE) : 'en';
 	}
 
 
