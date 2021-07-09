@@ -2,7 +2,6 @@
 <fusedoc>
 	<io>
 		<in>
-			<string name="I18N_LOCALE" comments="en|zh-hk|zh-cn|.." />
 		</in>
 		<out />
 	</io>
@@ -55,9 +54,12 @@ class I18N {
 		</description>
 		<io>
 			<in>
+				<!-- constant -->
+				<string name="I18N_LOCALE" />
+				<!-- parameter -->
 				<object name="$obj" />
-				<string name="$property" />
-				<string name="$locale" />
+				<string name="$prop" />
+				<string name="$lang" default="~I18N_LOCALE~" />
 			</in>
 			<out>
 				<mixed name="~return~" />
@@ -65,8 +67,16 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function convertObjectValue($object, $property, $locale) {
-
+	public static function convertObjectValue($obj, $prop, $lang) {
+		$lang = define('I18N_LOCALE') ? I18N_LOCALE : 'en';
+		// look for property name with locale suffix
+		// ===> no suffix for [en] locale
+		$prog_lang = ( $lang == 'en' ) ? $prop : ( $prop.'_'.str_replace('-', '_', $lang) );
+		if ( !empty($obj->{$prog_lang}) ) return $obj->{$prog_lang};
+		// otherwise, convert from [en] property
+		if ( !empty($obj->{$prop}) ) return self::convertStringValue($obj->{$prop}, $lang);
+		// not found...
+		return '';
 	}
 
 
@@ -81,9 +91,12 @@ class I18N {
 		</description>
 		<io>
 			<in>
-				<array name="$array" />
+				<!-- constant -->
+				<string name="I18N_LOCALE" />
+				<!-- parameter -->
+				<array name="$arr" />
 				<string name="$key" />
-				<string name="$locale" />
+				<string name="$lang" default="~I18N_LOCALE~" />
 			</in>
 			<out>
 				<mixed name="~return~" />
@@ -91,8 +104,16 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function convertArrayValue($array, $key, $locale) {
-
+	public static function convertArrayValue($arr, $key, $lang) {
+		$lang = define('I18N_LOCALE') ? I18N_LOCALE : 'en';
+		// look for key with locale suffix
+		// ===> no suffix for [en] locale
+		$key_lang = ( $lang == 'en' ) ? $key : ( $key.'_'.str_replace('-', '_', $lang) );
+		if ( !empty($arr->{$key_lang}) ) return $arr->{$key_lang};
+		// otherwise, convert from [en] element
+		if ( !empty($arr->{$key}) ) return self::convertStringValue($arr->{$key}, $lang);
+		// not found...
+		return '';
 	}
 
 
@@ -105,8 +126,11 @@ class I18N {
 		</description>
 		<io>
 			<in>
-				<string name="$string" />
-				<string name="$locale" />
+				<!-- constant -->
+				<string name="I18N_LOCALE" />
+				<!-- parameter -->
+				<string name="$str" />
+				<string name="$locale" default="~I18N_LOCALE~" />
 			</in>
 			<out>
 				<mixed name="~return~" />
@@ -114,8 +138,8 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function convertString($string, $locale) {
-
+	public static function convertString($str, $locale) {
+		$locale = define('I18N_LOCALE') ? I18N_LOCALE : 'en';
 	}
 
 
