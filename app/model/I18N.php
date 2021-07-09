@@ -75,45 +75,6 @@ class I18N {
 	/**
 	<fusedoc>
 		<description>
-			access object property of specified locale
-			===> or convert value of property to specified language
-			===> use [en] as fallback when property empty or not exists
-		</description>
-		<io>
-			<in>
-				<!-- constant -->
-				<string name="I18N_LOCALE" />
-				<!-- parameter -->
-				<object name="$obj" />
-				<string name="$prop" />
-				<string name="$lang" default="~I18N_LOCALE~" />
-			</in>
-			<out>
-				<mixed name="~return~" />
-			</out>
-		</io>
-	</fusedoc>
-	*/
-	public static function convertObjectValue($obj, $prop, $lang) {
-		$lang = $lang ?: self::locale();
-		// look for property name with locale suffix (no suffix for [en])
-		// ===> (e.g.) $student->name / $student->name__zh_hk / $student->name__zh_cn
-		for ( $i=1; $i<=3; $i++ ) {
-			$prog_lang = ( $lang == 'en' ) ? $prop : ( $prop.str_repeat('_', $i).str_replace('-', '_', strtolower($lang)) );
-			if ( !empty($obj->{$prog_lang}) ) return $obj->{$prog_lang};
-		}
-		// otherwise, convert from [en] property
-		if ( !empty($obj->{$prop}) ) return self::convertStringValue($obj->{$prop}, $lang);
-		// not found...
-		return '';
-	}
-
-
-
-
-	/**
-	<fusedoc>
-		<description>
 			access array element with key of specified locale
 			===> or convert value of array element to specified language
 			===> use [en] as fallback when element empty or not exists
@@ -133,7 +94,7 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function convertArrayValue($arr, $key, $lang) {
+	public static function convertArrayElement($arr, $key, $lang) {
 		$lang = $lang ?: self::locale();
 		// look for key with locale suffix (no suffix for [en])
 		// ===> (e.g.) $product['title'] / $product['title__zh_hk'] / $product['title__zh_cn']
@@ -143,6 +104,45 @@ class I18N {
 		}
 		// otherwise, convert from [en] element
 		if ( !empty($arr->{$key}) ) return self::convertStringValue($arr->{$key}, $lang);
+		// not found...
+		return '';
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			access object property of specified locale
+			===> or convert value of property to specified language
+			===> use [en] as fallback when property empty or not exists
+		</description>
+		<io>
+			<in>
+				<!-- constant -->
+				<string name="I18N_LOCALE" />
+				<!-- parameter -->
+				<object name="$obj" />
+				<string name="$prop" />
+				<string name="$lang" default="~I18N_LOCALE~" />
+			</in>
+			<out>
+				<mixed name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function convertObjectProperty($obj, $prop, $lang) {
+		$lang = $lang ?: self::locale();
+		// look for property name with locale suffix (no suffix for [en])
+		// ===> (e.g.) $student->name / $student->name__zh_hk / $student->name__zh_cn
+		for ( $i=1; $i<=3; $i++ ) {
+			$prog_lang = ( $lang == 'en' ) ? $prop : ( $prop.str_repeat('_', $i).str_replace('-', '_', strtolower($lang)) );
+			if ( !empty($obj->{$prog_lang}) ) return $obj->{$prog_lang};
+		}
+		// otherwise, convert from [en] property
+		if ( !empty($obj->{$prop}) ) return self::convertStringValue($obj->{$prop}, $lang);
 		// not found...
 		return '';
 	}
@@ -169,7 +169,7 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function convertString($str, $lang) {
+	public static function convertStringValue($str, $lang) {
 		$lang = $lang ?: self::locale();
 		// do nothing when type not match
 		if ( !is_string($str) ) return $str;
