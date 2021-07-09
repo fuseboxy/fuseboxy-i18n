@@ -98,8 +98,10 @@ class I18N {
 		$lang = $lang ?: self::locale();
 		// look for property name with locale suffix (no suffix for [en])
 		// ===> (e.g.) $student->name / $student->name__zh_hk / $student->name__zh_cn
-		$prog_lang = ( $lang == 'en' ) ? $prop : ( $prop.'__'.str_replace('-', '_', strtolower($lang)) );
-		if ( !empty($obj->{$prog_lang}) ) return $obj->{$prog_lang};
+		for ( $i=1; $i<=3; $i++ ) {
+			$prog_lang = ( $lang == 'en' ) ? $prop : ( $prop.str_repeat('_', $i).str_replace('-', '_', strtolower($lang)) );
+			if ( !empty($obj->{$prog_lang}) ) return $obj->{$prog_lang};
+		}
 		// otherwise, convert from [en] property
 		if ( !empty($obj->{$prop}) ) return self::convertStringValue($obj->{$prop}, $lang);
 		// not found...
@@ -135,8 +137,10 @@ class I18N {
 		$lang = $lang ?: self::locale();
 		// look for key with locale suffix (no suffix for [en])
 		// ===> (e.g.) $product['title'] / $product['title__zh_hk'] / $product['title__zh_cn']
-		$key_lang = ( $lang == 'en' ) ? $key : ( $key.'__'.str_replace('-', '_', strtolower($lang)) );
-		if ( !empty($arr->{$key_lang}) ) return $arr->{$key_lang};
+		for ( $i=1; $i<=3; $i++ ) {
+			$key_lang = ( $lang == 'en' ) ? $key : ( $key.str_repeat('_', $i).str_replace('-', '_', strtolower($lang)) );
+			if ( !empty($arr->{$key_lang}) ) return $arr->{$key_lang};
+		}
 		// otherwise, convert from [en] element
 		if ( !empty($arr->{$key}) ) return self::convertStringValue($arr->{$key}, $lang);
 		// not found...
