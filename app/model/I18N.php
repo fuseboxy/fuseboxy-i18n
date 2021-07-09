@@ -2,6 +2,8 @@
 <fusedoc>
 	<io>
 		<in>
+			<string name="I18N_LOCALE" />
+			<list_or_array name="I18N_LOCALE_ALL" />
 		</in>
 		<out />
 	</io>
@@ -13,7 +15,6 @@ class I18N {
 	// get (latest) error message
 	private static $error;
 	public static function error() { return self::$error; }
-
 
 
 
@@ -68,10 +69,10 @@ class I18N {
 	</fusedoc>
 	*/
 	public static function convertObjectValue($obj, $prop, $lang) {
-		$lang = define('I18N_LOCALE') ? I18N_LOCALE : 'en';
-		// look for property name with locale suffix
-		// ===> no suffix for [en] locale
-		$prog_lang = ( $lang == 'en' ) ? $prop : ( $prop.'_'.str_replace('-', '_', $lang) );
+		$lang = $lang ?: self::locale();
+		// look for property name with locale suffix (no suffix for [en])
+		// ===> (e.g.) $student->name / $student->name__zh_hk / $student->name__zh_cn
+		$prog_lang = ( $lang == 'en' ) ? $prop : ( $prop.'__'.str_replace('-', '_', strtolower($lang)) );
 		if ( !empty($obj->{$prog_lang}) ) return $obj->{$prog_lang};
 		// otherwise, convert from [en] property
 		if ( !empty($obj->{$prop}) ) return self::convertStringValue($obj->{$prop}, $lang);
@@ -105,10 +106,10 @@ class I18N {
 	</fusedoc>
 	*/
 	public static function convertArrayValue($arr, $key, $lang) {
-		$lang = define('I18N_LOCALE') ? I18N_LOCALE : 'en';
-		// look for key with locale suffix
-		// ===> no suffix for [en] locale
-		$key_lang = ( $lang == 'en' ) ? $key : ( $key.'_'.str_replace('-', '_', $lang) );
+		$lang = $lang ?: self::locale();
+		// look for key with locale suffix (no suffix for [en])
+		// ===> (e.g.) $product['title'] / $product['title__zh_hk'] / $product['title__zh_cn']
+		$key_lang = ( $lang == 'en' ) ? $key : ( $key.'__'.str_replace('-', '_', strtolower($lang)) );
 		if ( !empty($arr->{$key_lang}) ) return $arr->{$key_lang};
 		// otherwise, convert from [en] element
 		if ( !empty($arr->{$key}) ) return self::convertStringValue($arr->{$key}, $lang);
@@ -138,8 +139,68 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function convertString($str, $locale) {
-		$locale = define('I18N_LOCALE') ? I18N_LOCALE : 'en';
+	public static function convertString($str, $lang) {
+		$lang = $lang ?: self::locale();
+		// do nothing when type not match
+		if ( !is_string($str) ) return $str;
+
+
+		// convert nothing...
+		return $str;
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			obtain current locale (default [en] when not specified)
+		</description>
+		<io>
+			<in>
+				<string name="I18N_LOCALE" optional="yes" />
+			</in>
+			<out>
+				<string name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function locale() {
+		return define('I18N_LOCALE') ? I18N_LOCALE : 'en';
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			convert all traditional chinese characters into simplified chinese
+		</description>
+		<io>
+			<in>
+				<string name="$input" />
+			</in>
+			<out>
+				<string name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function tc2sc($input) {
+		$result = '';
+		// load mapping
+		$map = include 'tc2sc.php';
+		// go through each character of input
+		$length = mb_strlen($input);
+		for ($i=0; $i<$length; $i++) {
+			$char = mb_substr($input, $i, 1);
+			$result .= isset($map[$char]) ? $map[$char] : $char;
+		}
+		// done!
+		return $result;
 	}
 
 
