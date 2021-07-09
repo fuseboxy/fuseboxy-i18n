@@ -173,8 +173,19 @@ class I18N {
 		$lang = $lang ?: self::locale();
 		// do nothing when type not match
 		if ( !is_string($str) ) return $str;
-
-
+/*
+// only load once for every request
+$enumType = 'LOCALE ('.strtoupper($lang).')';
+if ( !isset($GLOBALS[$enumType]) ) {
+	$GLOBALS[$enumType] = Enum::getArray($enumType);
+}
+// auto-translate when necessary
+if ( $lang == 'zh-cn' and empty($GLOBALS[$enumType][$str]) and !empty(locale__simpleValue($str, 'zh-hk')) ) {
+	$GLOBALS[$enumType][$str] = LangConverter::tc2sc(locale__simpleValue($str, 'zh-hk'));
+}
+// done!
+return isset($GLOBALS[$enumType][$str]) ? $GLOBALS[$enumType][$str] : $str;
+*/
 		// convert nothing...
 		return $str;
 	}
