@@ -207,7 +207,7 @@ class I18N {
 					</structure>
 				</structure>
 				<!-- parameter -->
-				<string name="$str" />
+				<string name="$str" comments="input with [en] language" />
 				<string name="$lang" optional="yes" />
 			</in>
 			<out>
@@ -218,25 +218,20 @@ class I18N {
 	*/
 	public static function convertStringValue($str, $lang=null) {
 		$lang = $lang ?: self::locale();
-		// do nothing when type not match
-		if ( !is_string($str) ) return $str;
-		// load from cache
+		// do nothing 
+		// ===> when type not match
+		// ===> when convert to [en]
+		if ( !is_string($str) or $lang == 'en' ) return $str;
+		// load cache
 		$cache = self::all();
 		if ( $cache === false ) return false;
-/*
-// only load once for every request
-$enumType = 'LOCALE ('.strtoupper($lang).')';
-if ( !isset($GLOBALS[$enumType]) ) {
-	$GLOBALS[$enumType] = Enum::getArray($enumType);
-}
-// auto-translate when necessary
-if ( $lang == 'zh-cn' and empty($GLOBALS[$enumType][$str]) and !empty(locale__simpleValue($str, 'zh-hk')) ) {
-	$GLOBALS[$enumType][$str] = LangConverter::tc2sc(locale__simpleValue($str, 'zh-hk'));
-}
-// done!
-return isset($GLOBALS[$enumType][$str]) ? $GLOBALS[$enumType][$str] : $str;
-*/
-		// convert nothing...
+		// check if any match
+		// ===> return specific language
+		// ===> perform [tc2sc] when necessary
+		$match = isset($cache['byValue'][$str]) ? $cache['byValue'][$str] : array();
+		if ( !empty($match[$lang]) ) return $match[$lang];
+		if ( $lang == 'zh-cn' and !empty($match['zh-hk']) ) return self::tc2sc($match['zh-hk']);
+		// no match...
 		return $str;
 	}
 
