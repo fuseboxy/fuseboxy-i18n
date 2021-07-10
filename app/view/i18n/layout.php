@@ -1,4 +1,8 @@
 <?php
+// breadcrumb
+$arguments['breadcrumb'] = array('Multi-Language');
+
+
 // config
 $tabLayout = array(
 	'style' => 'tab',
