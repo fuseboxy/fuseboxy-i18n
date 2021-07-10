@@ -1,5 +1,7 @@
 {
 	"name": "fuseboxy/fuseboxy-i18n",
+	"description": "Fuseboxy i18n - Module for Multi-Language",
+	"type": "fuseboxy-module",
 	"license": "MIT",
 	"require": {}
 }
