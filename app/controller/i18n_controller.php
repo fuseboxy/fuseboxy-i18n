@@ -4,9 +4,9 @@ F::redirect('auth', !Auth::user());
 F::error('Forbidden', !Auth::userInRole('SUPER,ADMIN'));
 
 
-// all locale
-$all = I18N::localeAll();
-F::error(I18N::error(), $all === false);
+// all locales
+$locales = I18N::localeAll();
+F::error(I18N::error(), $locales === false);
 
 
 // field layout
@@ -14,19 +14,19 @@ F::error(I18N::error(), $all === false);
 // ===> all others grouped in another column
 $others = implode('|', array_filter(array_map(function($locale){
 	return ( $locale != 'en' ) ? str_replace('-', '_', $locale) : false;
-}, $all)));
+}, $locales)));
 $listField = array('en' => !empty($others) ? '35%' : '70%');
 if ( !empty($others) ) $listField[$others] = '35%';
 
 
 // field config per locale
 $fieldConfig = array();
-foreach ( $all as $locale ) {
+foreach ( $locales as $locale ) {
 	$fieldName = str_replace('-', '_', $locale);
 	$fieldConfig[$fieldName] = array(
 		'format' => 'textarea',
 		'label' => strtoupper($locale),
-		'placeholder' => ( count($all) > 2 ) ? strtoupper($locale) : false,
+		'placeholder' => ( count($locales) > 2 ) ? strtoupper($locale) : false,
 		'style' => 'height: 5rem',
 	);
 }
