@@ -22,6 +22,73 @@ class I18N {
 	/**
 	<fusedoc>
 		<description>
+			obtain all texts from database
+			===> cache for this web request
+		</description>
+		<io>
+			<in>
+				<!-- cache -->
+				<structure name="__i18n__" scope="$GLOBALS" optional="yes">
+					<structure name="byAlias">
+						<structure name="~alias~">
+							<string name="en|~locale~" />
+						</structure>
+					</structure>
+					<structure name="byValue">
+						<structure name="~en_value~">
+							<string name="~locale~" />
+						</structure>
+					</structure>
+				</structure>
+			</in>
+			<out>
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function all() {
+		// build cache (when necessary)
+		if ( !isset($GLOBALS['__i18n__']) ) {
+			$GLOBALS['__i18n__'] = array('byAlias' => [], 'byValue' => []);
+			// get all data
+			$data = ORM::get('i18n', 'disabled = 0');
+			if ( $data === false ) {
+				self::$error = ORM::error();
+				return false;
+			}
+			// move to cache
+			foreach ( $data as $item ) {
+				// get all locales
+				$locales = self::localeAll();
+				if ( $locales === false ) return false;
+				// map by alias (when alias specified)
+				if ( !empty($item->alias) ) {
+					$GLOBALS['__i18n__']['byAlias'][$item->alias] = array();
+					foreach ( $locales as $locale ) {
+						$fieldName = str_replace('-', '_', $locale);
+						$GLOBALS['__i18n__']['byAlias'][$item->alias][$locale] = $item->{$fieldName};
+					}
+				}
+				// map by value (when [en] not empty)
+				if ( !empty($item->en) ) {
+					$GLOBALS['__i18n__']['byValue'][$item->en] = array();
+					foreach ( $locales as $locale ) if ( $locale != 'en' ) {
+						$fieldName = str_replace('-', '_', $locale);
+						$GLOBALS['__i18n__']['byValue'][$item->en][$locale] = $item->{$fieldName};
+					}
+				}
+			} // foreach-data
+		} // if-isset
+		// done!
+		return $GLOBALS['__i18n__'];
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
 			facade method to convert language
 			===> last argument is always [locale]
 		</description>
@@ -127,7 +194,7 @@ class I18N {
 		<io>
 			<in>
 				<!-- cache -->
-				<structure name="__i18n__" scope="$GLOBALS" optional="yes">
+				<structure name="~self::all()~">
 					<structure name="byAlias">
 						<structure name="~alias~">
 							<string name="en|~locale~" />
@@ -153,8 +220,8 @@ class I18N {
 		$lang = $lang ?: self::locale();
 		// do nothing when type not match
 		if ( !is_string($str) ) return $str;
-		// load cache
-		$cache = self::cache();
+		// load from cache
+		$cache = self::all();
 		if ( $cache === false ) return false;
 /*
 // only load once for every request
