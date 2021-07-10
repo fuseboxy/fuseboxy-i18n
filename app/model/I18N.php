@@ -22,31 +22,6 @@ class I18N {
 	/**
 	<fusedoc>
 		<description>
-			obtain all locales (if specified)
-		</description>
-		<io>
-			<in>
-				<string name="I18N_LOCALE_ALL" optional="yes" />
-			</in>
-			<out>
-				<string name="~return~" />
-			</out>
-		</io>
-	</fusedoc>
-	*/
-	public static function all() {
-		$result = defined('I18N_LOCALE_ALL') ? I18N_LOCALE_ALL : self::locale();
-		$result = array_map('strtolower', is_array($result) ? $result : explode(',', $result));
-		if ( array_search('en', $result) === false ) array_unshift($result, 'en');
-		return array_filter($result);
-	}
-
-
-
-
-	/**
-	<fusedoc>
-		<description>
 			facade method to convert language
 			===> last argument is always [locale]
 		</description>
@@ -81,12 +56,9 @@ class I18N {
 		</description>
 		<io>
 			<in>
-				<!-- constant -->
-				<string name="I18N_LOCALE" />
-				<!-- parameter -->
 				<array name="$arr" />
 				<string name="$key" />
-				<string name="$lang" default="~I18N_LOCALE~" />
+				<string name="$lang" optional="yes" />
 			</in>
 			<out>
 				<mixed name="~return~" />
@@ -94,7 +66,7 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function convertArrayElement($arr, $key, $lang) {
+	public static function convertArrayElement($arr, $key, $lang=null) {
 		$lang = $lang ?: self::locale();
 		// look for key with locale suffix (no suffix for [en])
 		// ===> (e.g.) $product['title'] / $product['title__zh_hk'] / $product['title__zh_cn']
@@ -120,12 +92,9 @@ class I18N {
 		</description>
 		<io>
 			<in>
-				<!-- constant -->
-				<string name="I18N_LOCALE" />
-				<!-- parameter -->
 				<object name="$obj" />
 				<string name="$prop" />
-				<string name="$lang" default="~I18N_LOCALE~" />
+				<string name="$lang" optional="yes" />
 			</in>
 			<out>
 				<mixed name="~return~" />
@@ -133,7 +102,7 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function convertObjectProperty($obj, $prop, $lang) {
+	public static function convertObjectProperty($obj, $prop, $lang=null) {
 		$lang = $lang ?: self::locale();
 		// look for property name with locale suffix (no suffix for [en])
 		// ===> (e.g.) $student->name / $student->name__zh_hk / $student->name__zh_cn
@@ -157,11 +126,22 @@ class I18N {
 		</description>
 		<io>
 			<in>
-				<!-- constant -->
-				<string name="I18N_LOCALE" />
+				<!-- cache -->
+				<structure name="__i18n__" scope="$GLOBALS" optional="yes">
+					<structure name="byAlias">
+						<structure name="~alias~">
+							<string name="en|~locale~" />
+						</structure>
+					</structure>
+					<structure name="byValue">
+						<structure name="~en_value~">
+							<string name="~locale~" />
+						</structure>
+					</structure>
+				</structure>
 				<!-- parameter -->
 				<string name="$str" />
-				<string name="$locale" default="~I18N_LOCALE~" />
+				<string name="$lang" optional="yes" />
 			</in>
 			<out>
 				<mixed name="~return~" />
@@ -169,10 +149,13 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function convertStringValue($str, $lang) {
+	public static function convertStringValue($str, $lang=null) {
 		$lang = $lang ?: self::locale();
 		// do nothing when type not match
 		if ( !is_string($str) ) return $str;
+		// load cache
+		$cache = self::cache();
+		if ( $cache === false ) return false;
 /*
 // only load once for every request
 $enumType = 'LOCALE ('.strtoupper($lang).')';
@@ -210,6 +193,31 @@ return isset($GLOBALS[$enumType][$str]) ? $GLOBALS[$enumType][$str] : $str;
 	*/
 	public static function locale() {
 		return defined('I18N_LOCALE') ? strtolower(I18N_LOCALE) : 'en';
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			obtain all locales (if specified)
+		</description>
+		<io>
+			<in>
+				<string name="I18N_LOCALE_ALL" optional="yes" />
+			</in>
+			<out>
+				<string name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function localeAll() {
+		$result = defined('I18N_LOCALE_ALL') ? I18N_LOCALE_ALL : self::locale();
+		$result = array_map('strtolower', is_array($result) ? $result : explode(',', $result));
+		if ( array_search('en', $result) === false ) array_unshift($result, 'en');
+		return array_filter($result);
 	}
 
 

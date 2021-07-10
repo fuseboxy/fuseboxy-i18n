@@ -4,8 +4,8 @@ F::redirect('auth', !Auth::user());
 F::error('Forbidden', !Auth::userInRole('SUPER,ADMIN'));
 
 
-// all locales
-$all = I18N::all();
+// all locale
+$all = I18N::localeAll();
 F::error(I18N::error(), $all === false);
 
 
