@@ -13,7 +13,7 @@ F::error(I18N::error(), $all === false);
 // ===> [en] has one column separately
 // ===> all others grouped in another column
 $others = implode('|', array_filter(array_map(function($locale){
-	return ( $locale != 'en' ) ? str_ireplace('-', '_', $locale) : false;
+	return ( $locale != 'en' ) ? str_replace('-', '_', $locale) : false;
 }, $all)));
 $listField = array('en' => !empty($others) ? '35%' : '70%');
 if ( !empty($others) ) $listField[$others] = '35%';
@@ -22,7 +22,7 @@ if ( !empty($others) ) $listField[$others] = '35%';
 // field config per locale
 $fieldConfig = array();
 foreach ( $all as $locale ) {
-	$fieldName = str_ireplace('-', '_', $locale);
+	$fieldName = str_replace('-', '_', $locale);
 	$fieldConfig[$fieldName] = array(
 		'format' => 'textarea',
 		'label' => strtoupper($locale),
