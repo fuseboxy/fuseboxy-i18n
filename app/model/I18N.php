@@ -209,7 +209,7 @@ return isset($GLOBALS[$enumType][$str]) ? $GLOBALS[$enumType][$str] : $str;
 	</fusedoc>
 	*/
 	public static function locale() {
-		return define('I18N_LOCALE') ? strtolower(I18N_LOCALE) : 'en';
+		return defined('I18N_LOCALE') ? strtolower(I18N_LOCALE) : 'en';
 	}
 
 
