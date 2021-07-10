@@ -36,7 +36,7 @@ class I18N {
 	*/
 	public static function all() {
 		$result = defined('I18N_LOCALE_ALL') ? I18N_LOCALE_ALL : self::locale();
-		$result = array_map('strtolower', explode(',', $result));
+		$result = array_map('strtolower', is_array($result) ? $result : explode(',', $result));
 		if ( array_search('en', $result) === false ) array_unshift($result, 'en');
 		return array_filter($result);
 	}
