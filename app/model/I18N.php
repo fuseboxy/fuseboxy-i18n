@@ -61,20 +61,17 @@ class I18N {
 				// get all locales
 				$locales = self::localeAll();
 				if ( $locales === false ) return false;
-				// map by alias (when alias specified)
-				if ( !empty($item->alias) ) {
-					$GLOBALS['__i18n__']['byAlias'][$item->alias] = array();
-					foreach ( $locales as $locale ) {
-						$fieldName = str_replace('-', '_', $locale);
-						$GLOBALS['__i18n__']['byAlias'][$item->alias][$locale] = $item->{$fieldName};
-					}
-				}
-				// map by value (when [en] not empty)
-				if ( !empty($item->en) ) {
-					$GLOBALS['__i18n__']['byValue'][$item->en] = array();
-					foreach ( $locales as $locale ) if ( $locale != 'en' ) {
-						$fieldName = str_replace('-', '_', $locale);
-						$GLOBALS['__i18n__']['byValue'][$item->en][$locale] = $item->{$fieldName};
+				// map by value & alias
+				$GLOBALS['__i18n__']['byValue'][$item->en] = array();
+				foreach ( $locales as $locale ) {
+					$fieldName = str_replace('-', '_', $locale);
+					// map by value
+					// ===> always supposed [en] not empty
+					$GLOBALS['__i18n__']['byValue'][$item->en][$locale] = $item->{$fieldName};
+					// map by alias (when necessary)
+					// ===> assign by reference to save memory
+					if ( !empty($item->alias) ) {
+						$GLOBALS['__i18n__']['byAlias'][$item->alias][$locale] = &$GLOBALS['__i18n__']['byValue'][$item->en][$locale];
 					}
 				}
 			} // foreach-data
