@@ -102,46 +102,10 @@ class I18N {
 	</fusedoc>
 	*/
 	public static function convert($arg1, $arg2=null, $arg3=null) {
+		if ( is_array($arg1)  ) return self::convertObjectProperty((object) $arg1, $arg2, $arg3);
 		if ( is_object($arg1) ) return self::convertObjectProperty($arg1, $arg2, $arg3);
-		if ( is_array($arg1)  ) return self::convertArrayElement($arg1, $arg2, $arg3);
 		if ( is_string($arg1) ) return self::convertStringValue($arg1, $arg2);
 		return $arg1;
-	}
-
-
-
-
-	/**
-	<fusedoc>
-		<description>
-			access array element with key of specified locale
-			===> or convert value of array element to specified language
-			===> use [en] as fallback when element empty or not exists
-		</description>
-		<io>
-			<in>
-				<array name="$arr" />
-				<string name="$key" />
-				<string name="$lang" optional="yes" />
-			</in>
-			<out>
-				<mixed name="~return~" />
-			</out>
-		</io>
-	</fusedoc>
-	*/
-	public static function convertArrayElement($arr, $key, $lang=null) {
-		$lang = $lang ?: self::locale();
-		// look for key with locale suffix (no suffix for [en])
-		// ===> (e.g.) $product['title'] / $product['title__zh_hk'] / $product['title__zh_cn']
-		for ( $i=1; $i<=3; $i++ ) {
-			$key_lang = ( $lang == 'en' ) ? $key : ( $key.str_repeat('_', $i).str_replace('-', '_', strtolower($lang)) );
-			if ( !empty($arr->{$key_lang}) ) return $arr->{$key_lang};
-		}
-		// otherwise, convert from [en] element
-		if ( !empty($arr->{$key}) ) return self::convertStringValue($arr->{$key}, $lang);
-		// not found...
-		return '';
 	}
 
 
@@ -168,13 +132,26 @@ class I18N {
 	*/
 	public static function convertObjectProperty($obj, $prop, $lang=null) {
 		$lang = $lang ?: self::locale();
-		// look for property name with locale suffix (no suffix for [en])
+		// look for property with locale-suffix (no suffix for [en])
 		// ===> (e.g.) $student->name / $student->name__zh_hk / $student->name__zh_cn
+		// ===> return from non-empty property with correct locale-suffix
 		for ( $i=1; $i<=3; $i++ ) {
-			$prog_lang = ( $lang == 'en' ) ? $prop : ( $prop.str_repeat('_', $i).str_replace('-', '_', strtolower($lang)) );
-			if ( !empty($obj->{$prog_lang}) ) return $obj->{$prog_lang};
+			$prop_lang = ( $lang == 'en' ) ? $prop : ( $prop.str_repeat('_', $i).str_replace('-', '_', strtolower($lang)) );
+			if ( !empty($obj->{$prop_lang}) ) return $obj->{$prop_lang};
 		}
-		// otherwise, convert from [en] property
+		// if locale is [zh-cn] & empty or not-found
+		// ===> look for traditional chinese field
+		// ===> perform [tc2sc] accordingly
+		if ( $lang == 'zh-cn' ) {
+			for ( $i=1; $i<=3; $i++ ) {
+				$prop_hk = $prop.str_repeat('_', $i).'zh_hk';
+				$prop_tw = $prop.str_repeat('_', $i).'zh_tw';
+				if ( !empty($obj->{$prop_hk}) ) return self::tc2sc($obj->$prop_hk);
+				if ( !empty($obj->{$prop_tw}) ) return self::tc2sc($obj->$prop_tw);
+			}
+		}
+		// if no key with locale-suffix
+		// ===> simply convert from [en] element
 		if ( !empty($obj->{$prop}) ) return self::convertStringValue($obj->{$prop}, $lang);
 		// not found...
 		return '';
@@ -224,10 +201,12 @@ class I18N {
 		if ( $cache === false ) return false;
 		// check if any match
 		// ===> return specific language
-		// ===> perform [tc2sc] when necessary
 		$match = isset($cache['byValue'][$str]) ? $cache['byValue'][$str] : array();
 		if ( !empty($match[$lang]) ) return $match[$lang];
+		// if no match & language simplified chinese
+		// ===> perform [tc2sc] from traditional chinese (if any)
 		if ( $lang == 'zh-cn' and !empty($match['zh-hk']) ) return self::tc2sc($match['zh-hk']);
+		if ( $lang == 'zh-cn' and !empty($match['zh-tw']) ) return self::tc2sc($match['zh-tw']);
 		// no match...
 		return $str;
 	}
