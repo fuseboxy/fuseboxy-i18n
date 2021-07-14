@@ -33,7 +33,7 @@ class I18N {
 			<in>
 				<!-- cache -->
 				<structure name="__i18n__" scope="$GLOBALS" optional="yes">
-					<structure name="byValue">
+					<structure name="cs">
 						<structure name="~en_value~">
 							<string name="~locale~" />
 						</structure>
@@ -48,7 +48,7 @@ class I18N {
 	public static function all() {
 		// build cache (when necessary)
 		if ( !isset($GLOBALS['__i18n__']) ) {
-			$GLOBALS['__i18n__'] = array('byValue' => []);
+			$GLOBALS['__i18n__'] = array('cs' => []);
 			// get all data
 			$data = ORM::get('i18n', 'disabled = 0');
 			if ( $data === false ) {
@@ -61,12 +61,12 @@ class I18N {
 				$locales = self::localeAll();
 				if ( $locales === false ) return false;
 				// map by value
-				$GLOBALS['__i18n__']['byValue'][$item->en] = array();
+				$GLOBALS['__i18n__']['cs'][$item->en] = array();
 				foreach ( $locales as $locale ) {
 					$fieldName = str_replace('-', '_', $locale);
 					// map by value
 					// ===> always supposed [en] not empty
-					$GLOBALS['__i18n__']['byValue'][$item->en][$locale] = $item->{$fieldName};
+					$GLOBALS['__i18n__']['cs'][$item->en][$locale] = $item->{$fieldName};
 				}
 			} // foreach-data
 		} // if-isset
@@ -163,7 +163,7 @@ class I18N {
 			<in>
 				<!-- cache -->
 				<structure name="~self::all()~">
-					<structure name="byValue">
+					<structure name="cs">
 						<structure name="~en_value~">
 							<string name="~locale~" />
 						</structure>
@@ -190,7 +190,7 @@ class I18N {
 		if ( $cache === false ) return false;
 		// check if any match
 		// ===> return specific language
-		$match = isset($cache['byValue'][$str]) ? $cache['byValue'][$str] : array();
+		$match = isset($cache['cs'][$str]) ? $cache['cs'][$str] : array();
 		if ( !empty($match[$lang]) ) return $match[$lang];
 		// if no match & language simplified chinese
 		// ===> perform [tc2sc] from traditional chinese (if any)
