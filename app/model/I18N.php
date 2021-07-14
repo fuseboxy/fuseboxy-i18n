@@ -344,9 +344,5 @@ class I18N {
 } // class
 
 
-
-
 // alias method
-function __($arg1, $arg2=null, $arg3=null) {
-	return I18N::convert($arg1, $arg2, $arg3);
-}
+function __(...$args) { return I18N::convert(...$args); }
