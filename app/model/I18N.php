@@ -202,6 +202,28 @@ class I18N {
 	/**
 	<fusedoc>
 		<description>
+			shorthand to check current locale
+		</description>
+		<io>
+			<in>
+				<string name="$lang" />
+			</in>
+			<out>
+				<boolean name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function is($lang) {
+		return ( self::locale() == $lang );
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
 			obtain current locale (default [en] when not specified)
 		</description>
 		<io>
