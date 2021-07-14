@@ -12,6 +12,10 @@
 class I18N {
 
 
+	// default comparison mode
+	// ===> cs : case-sensitive
+	// ===> ci : case-insensitive
+	private static $mode = 'ci';
 	// get (latest) error message
 	private static $error;
 	public static function error() { return self::$error; }
@@ -271,6 +275,37 @@ class I18N {
 	/**
 	<fusedoc>
 		<description>
+			get or set comparison mode
+			===> cs : case-sensitive
+			===> ci : case-insensitive (default)
+		</description>
+		<io>
+			<in>
+				<string name="$val" optional="yes" comments="cs|ci" />
+			</in>
+			<out>
+				<!-- getter -->
+				<string name="~return~" optional="yes" />
+				<!-- setter -->
+				<boolean name="~return~" optional="yes" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function mode($val=null) {
+		// getter
+		if ( empty($mode) ) return self::$mode;
+		// setter
+		self::$mode = strtolower($val);
+		return true;
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
 			convert all traditional chinese characters into simplified chinese
 		</description>
 		<io>
@@ -299,6 +334,7 @@ class I18N {
 
 
 } // class
+
 
 
 
