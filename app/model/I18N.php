@@ -164,6 +164,8 @@ class I18N {
 		</description>
 		<io>
 			<in>
+				<!-- setting -->
+				<string name="$mode" scope="self" comments="CS|CI" />
 				<!-- cache -->
 				<structure name="~self::all()~">
 					<structure name="CS|CI">
@@ -192,10 +194,13 @@ class I18N {
 		$cache = self::all();
 		if ( $cache === false ) return false;
 		// check if any match
-		// ===> return specific language
-		$match = isset($cache['CS'][$str]) ? $cache['CS'][$str] : array();
+		// ===> apply comparison mode
+		$mode = self::$mode;
+		if ( $mode == 'CI' ) $str = strtolower($str);
+		if ( isset($cache[$mode][$str]) ) $match = $cache[$mode][$str];
+		// return right away if already has match (lucky~)
 		if ( !empty($match[$lang]) ) return $match[$lang];
-		// if no match & language simplified chinese
+		// if no match & language is simplified chinese
 		// ===> perform [tc2sc] from traditional chinese (if any)
 		if ( $lang == 'zh-cn' and !empty($match['zh-hk']) ) return self::tc2sc($match['zh-hk']);
 		if ( $lang == 'zh-cn' and !empty($match['zh-tw']) ) return self::tc2sc($match['zh-tw']);
@@ -284,7 +289,7 @@ class I18N {
 		</description>
 		<io>
 			<in>
-				<string name="$val" optional="yes" comments="CS|CI" />
+				<string name="$input" optional="yes" comments="CS|CI" />
 			</in>
 			<out>
 				<!-- getter -->
@@ -295,11 +300,11 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function mode($val=null) {
+	public static function mode($input=null) {
 		// getter
 		if ( empty($mode) ) return self::$mode;
 		// setter
-		self::$mode = strtoupper($val);
+		self::$mode = strtoupper($input);
 		return true;
 	}
 
