@@ -13,9 +13,9 @@ class I18N {
 
 
 	// default comparison mode
-	// ===> cs : case-sensitive
-	// ===> ci : case-insensitive
-	private static $mode = 'ci';
+	// ===> CS : case-sensitive
+	// ===> CI : case-insensitive
+	private static $mode = 'CI';
 	// get (latest) error message
 	private static $error;
 	public static function error() { return self::$error; }
@@ -33,7 +33,7 @@ class I18N {
 			<in>
 				<!-- cache -->
 				<structure name="__i18n__" scope="$GLOBALS" optional="yes">
-					<structure name="cs">
+					<structure name="CS|CI">
 						<structure name="~en_value~">
 							<string name="~locale~" />
 						</structure>
@@ -48,7 +48,7 @@ class I18N {
 	public static function all() {
 		// build cache (when necessary)
 		if ( !isset($GLOBALS['__i18n__']) ) {
-			$GLOBALS['__i18n__'] = array('cs' => []);
+			$GLOBALS['__i18n__'] = array('CS' => [], 'CI' => []);
 			// get all data
 			$data = ORM::get('i18n', 'disabled = 0');
 			if ( $data === false ) {
@@ -61,12 +61,12 @@ class I18N {
 				$locales = self::localeAll();
 				if ( $locales === false ) return false;
 				// map by value
-				$GLOBALS['__i18n__']['cs'][$item->en] = array();
+				$GLOBALS['__i18n__']['CS'][$item->en] = array();
 				foreach ( $locales as $locale ) {
 					$fieldName = str_replace('-', '_', $locale);
 					// map by value
 					// ===> always supposed [en] not empty
-					$GLOBALS['__i18n__']['cs'][$item->en][$locale] = $item->{$fieldName};
+					$GLOBALS['__i18n__']['CS'][$item->en][$locale] = $item->{$fieldName};
 				}
 			} // foreach-data
 		} // if-isset
@@ -163,7 +163,7 @@ class I18N {
 			<in>
 				<!-- cache -->
 				<structure name="~self::all()~">
-					<structure name="cs">
+					<structure name="CS|CI">
 						<structure name="~en_value~">
 							<string name="~locale~" />
 						</structure>
@@ -190,7 +190,7 @@ class I18N {
 		if ( $cache === false ) return false;
 		// check if any match
 		// ===> return specific language
-		$match = isset($cache['cs'][$str]) ? $cache['cs'][$str] : array();
+		$match = isset($cache['CS'][$str]) ? $cache['CS'][$str] : array();
 		if ( !empty($match[$lang]) ) return $match[$lang];
 		// if no match & language simplified chinese
 		// ===> perform [tc2sc] from traditional chinese (if any)
@@ -276,12 +276,12 @@ class I18N {
 	<fusedoc>
 		<description>
 			get or set comparison mode
-			===> cs : case-sensitive
-			===> ci : case-insensitive (default)
+			===> CS : case-sensitive
+			===> CI : case-insensitive (default)
 		</description>
 		<io>
 			<in>
-				<string name="$val" optional="yes" comments="cs|ci" />
+				<string name="$val" optional="yes" comments="CS|CI" />
 			</in>
 			<out>
 				<!-- getter -->
@@ -296,7 +296,7 @@ class I18N {
 		// getter
 		if ( empty($mode) ) return self::$mode;
 		// setter
-		self::$mode = strtolower($val);
+		self::$mode = strtoupper($val);
 		return true;
 	}
 
