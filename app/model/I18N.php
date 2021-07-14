@@ -61,12 +61,15 @@ class I18N {
 				$locales = self::localeAll();
 				if ( $locales === false ) return false;
 				// map by value
+				// ===> always supposed [en] not empty
 				$GLOBALS['__i18n__']['CS'][$item->en] = array();
+				$GLOBALS['__i18n__']['CI'][strtolower($item->en)] = array();
 				foreach ( $locales as $locale ) {
 					$fieldName = str_replace('-', '_', $locale);
-					// map by value
-					// ===> always supposed [en] not empty
+					// case-sensitive
 					$GLOBALS['__i18n__']['CS'][$item->en][$locale] = $item->{$fieldName};
+					// case-insensitive (by reference to save memory)
+					$GLOBALS['__i18n__']['CI'][strtolower($item->en)][$locale] = &$GLOBALS['__i18n__']['CS'][$item->en][$locale];
 				}
 			} // foreach-data
 		} // if-isset
