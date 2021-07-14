@@ -302,7 +302,7 @@ class I18N {
 	*/
 	public static function mode($input=null) {
 		// getter
-		if ( empty($mode) ) return self::$mode;
+		if ( empty($input) ) return self::$mode;
 		// setter
 		self::$mode = strtoupper($input);
 		return true;
