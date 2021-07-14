@@ -15,8 +15,8 @@ F::error(I18N::error(), $locales === false);
 $others = implode('|', array_filter(array_map(function($locale){
 	return ( $locale != 'en' ) ? str_replace('-', '_', $locale) : false;
 }, $locales)));
-$listField = array('en' => !empty($others) ? '35%' : '70%');
-if ( !empty($others) ) $listField[$others] = '35%';
+$listField = array('en' => !empty($others) ? '40%' : '80%');
+if ( !empty($others) ) $listField[$others] = '40%';
 
 
 // field config per locale
@@ -41,11 +41,9 @@ $scaffold = array(
 	'listOrder' => 'ORDER BY CASE IFNULL(alias, "") WHEN "" THEN 1 ELSE 0 END, alias, en',
 	'listField' => array_merge([
 		'id' => '60',
-		'alias' => '10%',
 	], $listField),
 	'fieldConfig' => array_merge([
 		'id',
-		'alias',
 	], $fieldConfig),
 	'writeLog' => class_exists('Log'),
 );

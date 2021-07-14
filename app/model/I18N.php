@@ -29,11 +29,6 @@ class I18N {
 			<in>
 				<!-- cache -->
 				<structure name="__i18n__" scope="$GLOBALS" optional="yes">
-					<structure name="byAlias">
-						<structure name="~alias~">
-							<string name="en|~locale~" />
-						</structure>
-					</structure>
 					<structure name="byValue">
 						<structure name="~en_value~">
 							<string name="~locale~" />
@@ -49,7 +44,7 @@ class I18N {
 	public static function all() {
 		// build cache (when necessary)
 		if ( !isset($GLOBALS['__i18n__']) ) {
-			$GLOBALS['__i18n__'] = array('byAlias' => [], 'byValue' => []);
+			$GLOBALS['__i18n__'] = array('byValue' => []);
 			// get all data
 			$data = ORM::get('i18n', 'disabled = 0');
 			if ( $data === false ) {
@@ -61,18 +56,13 @@ class I18N {
 				// get all locales
 				$locales = self::localeAll();
 				if ( $locales === false ) return false;
-				// map by value & alias
+				// map by value
 				$GLOBALS['__i18n__']['byValue'][$item->en] = array();
 				foreach ( $locales as $locale ) {
 					$fieldName = str_replace('-', '_', $locale);
 					// map by value
 					// ===> always supposed [en] not empty
 					$GLOBALS['__i18n__']['byValue'][$item->en][$locale] = $item->{$fieldName};
-					// map by alias (when necessary)
-					// ===> assign by reference to save memory
-					if ( !empty($item->alias) ) {
-						$GLOBALS['__i18n__']['byAlias'][$item->alias][$locale] = &$GLOBALS['__i18n__']['byValue'][$item->en][$locale];
-					}
 				}
 			} // foreach-data
 		} // if-isset
@@ -169,11 +159,6 @@ class I18N {
 			<in>
 				<!-- cache -->
 				<structure name="~self::all()~">
-					<structure name="byAlias">
-						<structure name="~alias~">
-							<string name="en|~locale~" />
-						</structure>
-					</structure>
 					<structure name="byValue">
 						<structure name="~en_value~">
 							<string name="~locale~" />
