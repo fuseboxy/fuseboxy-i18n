@@ -218,7 +218,9 @@ class I18N {
 		</description>
 		<io>
 			<in>
-				<string name="$lang" />
+				<list name="$langList" delim=",">
+					<string name="~locale~" />
+				</list>
 			</in>
 			<out>
 				<boolean name="~return~" />
@@ -226,8 +228,9 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function is($lang) {
-		return ( self::locale() == $lang );
+	public static function is($langList) {
+		if ( !is_array($langList) ) $langList = explode(',', $langList);
+		return in_array(self::locale(), $langList);
 	}
 
 
