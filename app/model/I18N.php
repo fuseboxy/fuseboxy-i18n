@@ -196,8 +196,8 @@ class I18N {
 		// check if any match
 		// ===> apply comparison mode
 		$mode = self::$mode;
-		if ( $mode == 'CI' ) $str = strtolower($str);
-		if ( isset($cache[$mode][$str]) ) $match = $cache[$mode][$str];
+		$strKey = ( $mode == 'CI' ) ? strtolower($str) : $str;
+		if ( isset($cache[$mode][$strKey]) ) $match = $cache[$mode][$strKey];
 		// return right away if already has match (lucky~)
 		if ( !empty($match[$lang]) ) return $match[$lang];
 		// if no match & language is simplified chinese
