@@ -38,7 +38,7 @@ $scaffold = array(
 	'editMode' => 'inline',
 	'allowDelete' => Auth::userInRole('SUPER'),
 	'layoutPath' => (dirname(__DIR__).'/view/i18n/layout.php'),
-	'listOrder' => 'ORDER BY CASE IFNULL(alias, "") WHEN "" THEN 1 ELSE 0 END, alias, en',
+	'listOrder' => 'ORDER BY en',
 	'listField' => array_merge([
 		'id' => '60',
 	], $listField),
