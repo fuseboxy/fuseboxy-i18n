@@ -1,7 +1,8 @@
 {
 	"name": "fuseboxy/fuseboxy-i18n",
-	"description": "Fuseboxy i18n - Module for Multi-Language",
+	"description": "Fuseboxy i18n - Multi-Lang Make Easy",
 	"type": "fuseboxy-module",
 	"license": "MIT",
-	"require": {}
+	"require": { "fuseboxy/fuseboxy-installer": "*" },
+	"autoload": { "files": [ "app/model/I18N.php" ] }
 }
