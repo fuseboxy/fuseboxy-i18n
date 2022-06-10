@@ -317,11 +317,11 @@ class I18N {
 	/**
 	<fusedoc>
 		<description>
-			convert all traditional chinese characters into simplified chinese
+			convert string from simplified chinese to traditional chinese
 		</description>
 		<io>
 			<in>
-				<string name="$input" />
+				<string name="$str" />
 			</in>
 			<out>
 				<string name="~return~" />
@@ -329,14 +329,46 @@ class I18N {
 		</io>
 	</fusedoc>
 	*/
-	public static function tc2sc($input) {
+	public static function sc2tc($str) {
+		$result = '';
+		// load mapping
+		$map = array_flip( include 'tc2sc.php' );
+		// go through each character of input
+		$length = mb_strlen($str);
+		for ($i=0; $i<$length; $i++) {
+			$char = mb_substr($str, $i, 1);
+			$result .= isset($map[$char]) ? $map[$char] : $char;
+		}
+		// done!
+		return $result;
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			convert string from traditional chinese to simplified chinese
+		</description>
+		<io>
+			<in>
+				<string name="$str" />
+			</in>
+			<out>
+				<string name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function tc2sc($str) {
 		$result = '';
 		// load mapping
 		$map = include 'tc2sc.php';
 		// go through each character of input
-		$length = mb_strlen($input);
+		$length = mb_strlen($str);
 		for ($i=0; $i<$length; $i++) {
-			$char = mb_substr($input, $i, 1);
+			$char = mb_substr($str, $i, 1);
 			$result .= isset($map[$char]) ? $map[$char] : $char;
 		}
 		// done!
