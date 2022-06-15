@@ -16,6 +16,8 @@ class I18N {
 	// ===> CS : case-sensitive
 	// ===> CI : case-insensitive
 	private static $mode = 'CI';
+	// current locale (optional)
+	private static $locale;
 	// get (latest) error message
 	private static $error;
 	public static function error() { return self::$error; }
@@ -239,20 +241,26 @@ class I18N {
 	/**
 	<fusedoc>
 		<description>
-			obtain current locale (default [en] when not specified)
+			obtain current locale
+			===> use property setting (self::$locale)
+			===> otherwise, use env setting (I18N_LOCALE)
+			===> otherwise, default using [en]
 		</description>
 		<io>
 			<in>
+				<string name="$locale" scope="self" optional="yes" />
 				<string name="I18N_LOCALE" optional="yes" />
 			</in>
 			<out>
-				<string name="~return~" />
+				<string name="~return~" default="en" />
 			</out>
 		</io>
 	</fusedoc>
 	*/
 	public static function locale() {
-		return defined('I18N_LOCALE') ? strtolower(I18N_LOCALE) : 'en';
+		if ( !empty(self::$locale) ) return self::$locale;
+		if ( defined('I18N_LOCALE') and !empty(I18N_LOCALE) ) return I18N_LOCALE;
+		return 'en';
 	}
 
 
@@ -341,6 +349,33 @@ class I18N {
 		}
 		// done!
 		return $result;
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			set locale (to override env setting)
+			===> set to null (or false) to clear
+		</description>
+		<io>
+			<in>
+				<string name="$lang" />
+			</in>
+			<out>
+				<!-- property -->
+				<string name="$locale" scope="self" />
+				<!-- return value -->
+				<boolean name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function set($lang) {
+		self::$locale = ( $lang === false ) ? null : $lang;
+		return true;
 	}
 
 
