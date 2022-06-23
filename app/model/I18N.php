@@ -325,6 +325,26 @@ class I18N {
 	/**
 	<fusedoc>
 		<description>
+			clear locale set locally (and fallback to use env setting)
+		</description>
+		<io>
+			<in />
+			<out>
+				<boolean name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function reset() {
+		return self::set(false);
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
 			convert string from simplified chinese to traditional chinese
 		</description>
 		<io>
