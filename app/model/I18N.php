@@ -43,6 +43,13 @@ class I18N {
 				</structure>
 			</in>
 			<out>
+				<structure name="~return~">
+					<structure name="CS|CI">
+						<structure name="~en_value~">
+							<string name="~locale~" />
+						</structure>
+					</structure>
+				</structure>
 			</out>
 		</io>
 	</fusedoc>
@@ -276,7 +283,9 @@ class I18N {
 				<string name="I18N_LOCALE_ALL" optional="yes" />
 			</in>
 			<out>
-				<string name="~return~" />
+				<array name="~return~">
+					<string name="~locale~" />
+				</array>
 			</out>
 		</io>
 	</fusedoc>
