@@ -1,4 +1,3 @@
-
 <?php
 F::redirect('auth', !Auth::user());
 F::error('Forbidden', !Auth::userInRole('SUPER,ADMIN'));
@@ -10,7 +9,7 @@ F::error(I18N::error(), $all === false);
 F::error('Please define more language by [I18N_LOCALE_ALL] constant', count($all) <= 1);
 
 
-// retain selected (use first non-EN as default)
+// default language (use first non-EN as default)
 $arguments['lang'] = $arguments['lang'] ?? call_user_func(function() use ($all){
 	foreach ( $all as $lang ) if ( $lang != 'en' ) return $lang;
 });
