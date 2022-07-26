@@ -8,11 +8,11 @@ $tabLayout = array(
 	'style' => 'tab',
 	'position' => 'left',
 	'header' => 'Multi-Language',
-	'nav' => array_map(function($lang){
+	'nav' => array_map(function($lang) use ($arguments){
 		return ( $lang == 'en' ) ? false : array(
 			'name'   => strtoupper($lang),
 			'url'    => F::url(F::command().'&lang='.$lang),
-			'active' => ( $_SESSION['i18nController__lang'] == $lang ),
+			'active' => ( $arguments['lang'] == $lang ),
 		);
 	}, I18N::localeAll()),
 );

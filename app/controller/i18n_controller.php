@@ -11,18 +11,19 @@ F::error('Please define more language by [I18N_LOCALE_ALL] constant', count($all
 
 
 // retain selected (use first non-EN as default)
-$_SESSION['i18nController__lang'] = $arguments['lang'] ?? $_SESSION['i18nController__lang'] ?? call_user_func(function() use ($all){
+$arguments['lang'] = $arguments['lang'] ?? call_user_func(function() use ($all){
 	foreach ( $all as $lang ) if ( $lang != 'en' ) return $lang;
 });
 
 
 // field name of another language
-$fieldName = str_replace('-', '_', $_SESSION['i18nController__lang']);
+$fieldName = str_replace('-', '_', $arguments['lang']);
 
 
 // config
 $scaffold = array(
 	'beanType' => 'i18n',
+	'retainParam' => array('lang' => $arguments['lang']),
 	'editMode' => 'inline',
 	'allowDelete' => Auth::userInRole('SUPER'),
 	'layoutPath' => (dirname(__DIR__).'/view/i18n/layout.php'),
@@ -34,7 +35,7 @@ $scaffold = array(
 	),
 	'fieldConfig' => array(
 		'en' => array('format' => 'textarea', 'label' => 'EN', 'style' => 'height: 5rem'),
-		$fieldName => array('format' => 'textarea', 'label' => strtoupper($_SESSION['i18nController__lang']), 'style' => 'height: 5rem'),
+		$fieldName => array('format' => 'textarea', 'label' => strtoupper($arguments['lang']), 'style' => 'height: 5rem'),
 	),
 	'writeLog' => class_exists('Log'),
 );
