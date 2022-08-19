@@ -280,7 +280,7 @@ class I18N {
 		</description>
 		<io>
 			<in>
-				<string name="I18N_LOCALE_ALL" optional="yes" />
+				<list_or_array name="$fusebox->config[locales]|FUSEBOXY_I18N_LOCALES" delim="," />
 			</in>
 			<out>
 				<array name="~return~">
