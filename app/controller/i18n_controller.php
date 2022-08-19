@@ -20,7 +20,7 @@ $fieldName = str_replace('-', '_', $arguments['lang']);
 
 
 // config
-$scaffold = array(
+$scaffold = array_merge([
 	'beanType' => 'i18n',
 	'retainParam' => array('lang' => $arguments['lang']),
 	'editMode' => 'inline',
@@ -37,7 +37,7 @@ $scaffold = array(
 		$fieldName => array('format' => 'textarea', 'label' => strtoupper($arguments['lang']), 'style' => 'height: 5rem'),
 	),
 	'writeLog' => class_exists('Log'),
-);
+], $i18nScaffold ?? $i18n_scaffold ?? []);
 
 
 // run!
