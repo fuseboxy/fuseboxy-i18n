@@ -4,5 +4,6 @@
 	"type": "fuseboxy-module",
 	"license": "MIT",
 	"require": { "fuseboxy/fuseboxy-installer": "*" },
+	"repositories": [ { "type": "git", "url": "https://www.bitbucket.org/henrygotmojo/fuseboxy-installer" } ],
 	"autoload": { "files": [ "app/model/I18N.php" ] }
 }
