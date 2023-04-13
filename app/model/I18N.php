@@ -250,13 +250,14 @@ class I18N {
 		<description>
 			obtain current locale
 			===> use property setting (self::$locale)
-			===> otherwise, use env setting (I18N_LOCALE)
+			===> otherwise, use env setting (fusebox-config or constant)
 			===> otherwise, default using [en]
 		</description>
 		<io>
 			<in>
 				<string name="$locale" scope="self" optional="yes" />
-				<string name="I18N_LOCALE" optional="yes" />
+				<string name="$fusebox->config['current']" optional="yes" />
+				<string name="FUSEBOXY_I18N_LOCALE" optional="yes" />
 			</in>
 			<out>
 				<string name="~return~" default="en" />
@@ -265,8 +266,12 @@ class I18N {
 	</fusedoc>
 	*/
 	public static function locale() {
+		// adhoc setting
 		if ( !empty(self::$locale) ) return self::$locale;
-		if ( defined('I18N_LOCALE') and !empty(I18N_LOCALE) ) return I18N_LOCALE;
+		// env setting
+		if ( class_exists('F') ) return F::config('i18n', 'current');
+		if ( defined('FUSEBOXY_I18N_LOCALE') ) return FUSEBOXY_I18N_LOCALE;
+		// default
 		return 'en';
 	}
 
