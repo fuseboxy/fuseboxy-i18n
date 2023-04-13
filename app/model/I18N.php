@@ -1,14 +1,4 @@
-<?php /*
-<fusedoc>
-	<io>
-		<in>
-			<string name="I18N_LOCALE" />
-			<list_or_array name="I18N_LOCALE_ALL" />
-		</in>
-		<out />
-	</io>
-</fusedoc>
-*/
+<?php
 class I18N {
 
 
@@ -256,7 +246,7 @@ class I18N {
 		<io>
 			<in>
 				<string name="$locale" scope="self" optional="yes" />
-				<string name="$fusebox->config['current']" optional="yes" />
+				<string name="$fusebox->config[i18n][current]" optional="yes" />
 				<string name="FUSEBOXY_I18N_LOCALE" optional="yes" />
 			</in>
 			<out>
@@ -269,7 +259,7 @@ class I18N {
 		// adhoc setting
 		if ( !empty(self::$locale) ) return self::$locale;
 		// env setting
-		if ( class_exists('F') ) return F::config('i18n', 'current');
+		if ( class_exists('F') ) return F::config('i18n')['current'] ?? null;
 		if ( defined('FUSEBOXY_I18N_LOCALE') ) return FUSEBOXY_I18N_LOCALE;
 		// default
 		return 'en';
@@ -285,7 +275,8 @@ class I18N {
 		</description>
 		<io>
 			<in>
-				<list_or_array name="$fusebox->config[locales]|FUSEBOXY_I18N_LOCALES" delim="," />
+				<list_or_array name="$fusebox->config[i18n][all]" delim="," optional="yes" />
+				<list_or_array name="FUSEBOXY_I18N_LOCALE_ALL" delim="," optional="yes" />
 			</in>
 			<out>
 				<array name="~return~">
@@ -296,10 +287,17 @@ class I18N {
 	</fusedoc>
 	*/
 	public static function localeAll() {
-		$result = defined('I18N_LOCALE_ALL') ? I18N_LOCALE_ALL : self::locale();
-		$result = array_map('strtolower', is_array($result) ? $result : explode(',', $result));
-		if ( array_search('en', $result) === false ) array_unshift($result, 'en');
-		return array_filter($result);
+		// env setting or default
+		if ( class_exists('F') ) $locales = F::config('i18n')['all'] ?? null;
+		elseif ( defined('FUSEBOXY_I18N_LOCALE_ALL') ) $locales = FUSEBOXY_I18N_LOCALE_ALL;
+		else $locales = self::locale();
+		// convert into array
+		if ( !is_array($locales) ) $locales = array_filter(explode(',', $locales));
+		$locales = array_map('strtolower', $locales);
+		// force english available
+		if ( array_search('en', $locales) === false ) array_unshift($locales, 'en');
+		// done!
+		return $locales;
 	}
 
 
