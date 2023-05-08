@@ -246,7 +246,9 @@ class I18N {
 		<io>
 			<in>
 				<string name="$locale" scope="self" optional="yes" />
-				<string name="$fusebox->config[i18n][current]" optional="yes" />
+				<structure name="i18n" scope="$fusebox->config">
+					<string name="current" optional="yes" />
+				</structure>
 				<string name="FUSEBOXY_I18N_LOCALE" optional="yes" />
 			</in>
 			<out>
@@ -275,7 +277,9 @@ class I18N {
 		</description>
 		<io>
 			<in>
-				<list_or_array name="$fusebox->config[i18n][all]" delim="," optional="yes" />
+				<structure name="i18n" scope="$fuesbox->config">
+					<list_or_array name="locales|all" delim="," optional="yes" />
+				</structure>
 				<list_or_array name="FUSEBOXY_I18N_LOCALE_ALL" delim="," optional="yes" />
 			</in>
 			<out>
@@ -288,7 +292,7 @@ class I18N {
 	*/
 	public static function localeAll() {
 		// env setting or default
-		if ( class_exists('F') ) $locales = F::config('i18n')['all'] ?? null;
+		if ( class_exists('F') ) $locales = F::config('i18n')['locales'] ?? F::config('i18n')['all'] ?? null;
 		elseif ( defined('FUSEBOXY_I18N_LOCALE_ALL') ) $locales = FUSEBOXY_I18N_LOCALE_ALL;
 		else $locales = self::locale();
 		// convert into array

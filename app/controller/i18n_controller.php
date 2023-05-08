@@ -6,7 +6,7 @@ F::error('Forbidden', !Auth::userInRole('SUPER,ADMIN'));
 // all locales
 $all = I18N::localeAll();
 F::error(I18N::error(), $all === false);
-F::error('Please define more language by [I18N_LOCALE_ALL] constant', count($all) <= 1);
+F::error('Please define more language by [i18n] fuseboxy config', count($all) <= 1);
 
 
 // default language (use first non-EN as default)
